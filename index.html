@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi LLM</title>
+</head>
+<body>
+
+  <h1>Preguntar a mi LLM</h1>
+
+  <textarea id="question" rows="4" cols="50"
+    placeholder="Escribe tu pregunta..."></textarea><br><br>
+
+  <button onclick="ask()">Preguntar</button>
+
+  <pre id="response"></pre>
+
+  <script>
+    async function ask() {
+      const question = document.getElementById("question").value;
+
+      if (!question) {
+        alert("Escribe una pregunta");
+        return;
+      }
+
+      document.getElementById("response").textContent = "Pensando...";
+
+      try {
+        const res = await fetch("http://194.163.165.132:8000/ask", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ question })
+        });
+
+        const data = await res.json();
+        document.getElementById("response").textContent = data.answer || data.error;
+
+      } catch (err) {
+        document.getElementById("response").textContent = "Error conectando con el backend";
+      }
+    }
+  </script>
+
+</body>
+</html>
